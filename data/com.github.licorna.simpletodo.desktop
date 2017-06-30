@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Simple
+GenericName=Simple Todo
+Comment=Simple Todo App
+Category=Utility
+Exec=com.github.licorna.simpletodo
+Icon=application-default-icon
+Terminal=false
+Type=application
+X-GNOME-Gettext-Domain=simple-todo
+X-GNOME-UsesNotifications=true
+Keywords=Simple;Todo

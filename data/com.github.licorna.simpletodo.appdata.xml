@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2017 Rodrigo Valin <licorna@gmail.com> -->
+<component type="desktop">
+  <id>com.github.licorna.simpletodo.desktop</id>
+  <metadata_license>CC0</metadata_license>
+  <name>Simple</name>
+  <summary>Life should be simple</summary>
+  <description>
+    <p>Simple is not a complex TODO taking application that will try to do everything it can for you.</p>
+  </description>
+  <custom>
+    <value key="x-appcenter-color-primary">#ff6600</value>
+    <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
+    <value key="x-appcenter-suggested-price">1</value>
+  </custom>stom>
+</component>

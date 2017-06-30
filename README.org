@@ -1,0 +1,54 @@
+* Project name: TODO
+
+Disclaimer: `TODO` is not the final name.
+
+`TODO` aims at being a simple TODO application that should work in
+three different environments, desktop application, console application
+and HTTP API (whatever clients it supports).
+
+This is an experiment to build something in `vala` and publish it into
+ElementaryOS AppCenter.
+
+** `TODO` elements
+
+This application will allow you to create TODO items to be executed at
+some point in the future, once, or on a repeated way. It will try to
+be as automated as possible, meaning that, after getting the
+notification that something has to be done, you should be able to just
+click a button (or perform some simple action) to have it done. This
+means that we require two basic stuff:
+
+*** Scheduling
+
+It will be allowed to set a deadline for the completion of this task
+or to set the repetition interval which this task should be completed,
+and for how many instances. How Google Calendar sets this is a good
+example of how I can do it, and a good example of limitations of
+current alternatives/standards.
+
+*** Automation
+
+It should be as easy as to automate tasks like: pay that thing I have
+to pay, maybe these actions are programmable and repeatable, like pay
+X amount to Z should be a parametric operation that can be applied
+multiple times for a given value of x and z.
+
+** Desktop Application
+
+The desktop context will be a simple ElementaryOS desktop application
+that will allow the user to add new tasks. The firs prototype will
+consist of simple TODO entry and display GUI, setting a deadline and a
+priority.
+
+
+** CLI
+
+The CLI will allow to obtain the list of tasks, 1 task in particular
+and updating and creating new tasks in a non interactive way, for
+using it into scripts or other programming languages.
+
+** HTTP API
+
+With a given set of credentials, the user will be able to publish his
+tasks into a web service and also to fetch and change his date from
+that service. This task will not be part of initial prototype.
