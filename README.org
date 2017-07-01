@@ -40,6 +40,53 @@ that will allow the user to add new tasks. The firs prototype will
 consist of simple TODO entry and display GUI, setting a deadline and a
 priority.
 
+*** Store the TODO!
+
+Currently TODOs can not be added! I'm planning on using a local sqlite
+database to store the user TODO list. This TODO file (~/.simpletodo/simple.db)
+will be backed up.
+
+*** Auto Add TODO action
+
+Figure out how to add a quick action to add TODO from anywhere. Lets say you
+are browsing something and you want to remember something to do on a future
+date. Have some kind of key combination to quickly add a new reminder or
+event. If the application the user is using is known, get some contextual
+information from it. For example: the user is browsing some web site and
+triggers the "Quick TODO" action. The TODO will be prepopulated with: "Visit
+website http://userwascheckingoutthis.com".
+
+*** Notifications
+
+There will be a notification (regular notifications) when one of the tasks is
+due to be completed -> Tasks need to have Date and time of completion.
+
+*** Auto calculate When
+
+For this I should define a simple grammar that might be used to recognize the
+time dimension of the task. It will accept entries as:
+
++ Tomorrow at 4pm
++ Every week
++ Monthly on first monday
++ First day of month
++ Not after 6pm
++ Not before tomorrow
++ ASAP
+
+*** Triggers
+
+This is not only a notifications app that auto calculates the deadline of your
+todo tasks. It will also allow you to trigger some action:
+
++ Open a link (website) on a browser
++ Open an application
++ Execute some script
+
+In the future I will incorporate tasks based on plugins like: "Make a
+deposit", "Pay rent", "Call mom", etc. And even "Turn lights on", "Delete
+SPAM", etc.
+
 
 ** CLI
 
