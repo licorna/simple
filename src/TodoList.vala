@@ -21,27 +21,23 @@
 
 
 namespace SimpleTodo {
-	public class Toolbar : Gtk.HeaderBar {
-		public Gtk.Button add_button;
-		public Gtk.Window parent_window;
-		public TodoAddPopover add_popover;
+	public class TodoList : Gtk.TreeView {
+		private Gtk.ListStore store;
+		private Gtk.TreeIter store_iter;
 
-		public Toolbar (Gtk.ActionGroup main_actions, Gtk.Window parent) {
-			// the add_class() line will not allow add_button Button
-			// to be displayed :(
-			// get_style_context ().add_class ("primary-toolbar");
+		public TodoList() {
+			store = new Gtk.ListStore(2, typeof(string), typeof(int));
 
-			parent_window = parent;
-			title = "Toolbar";
-			show_close_button = true;
+			store.append (out store_iter);
+			store.set (store_iter, 0, "Batman", 1, 13);
+			store.append (out store_iter);
+			store.set (store_iter, 0, "Superman", 1, 17);
 
-			add_button = new Gtk.Button
-				                .from_icon_name ("add",
-												 Gtk.IconSize.LARGE_TOOLBAR);
-			TodoAddPopover.build (add_button);
+			set_model(store);
 
-			pack_start (add_button);
-			show_all();
+			Gtk.CellRendererText cell = new Gtk.CellRendererText ();
+			insert_column_with_attributes (-1, "State", cell, "text", 0);
+			insert_column_with_attributes (-1, "Cities", cell, "text", 1);
 		}
 	}
 }

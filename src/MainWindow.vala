@@ -22,15 +22,15 @@
 
 namespace SimpleTodo {
 	public class MainWindow : Gtk.Window {
-		public Gtk.ActionGroup main_actions;		
+		public Gtk.ActionGroup main_actions;
 		public Toolbar toolbar;
-	 
-		
+		public TodoList todolist;
+
 		public MainWindow (Application simple_app) {
 			Object (application: simple_app);
 			title = "Simple";
 		}
-		
+
 		construct {
 			set_size_request (450, 400);
 			set_hide_titlebar_when_maximized (false);
@@ -45,29 +45,15 @@ namespace SimpleTodo {
 		}
 
 		private void init_layout () {
-			set_titlebar (new Toolbar (main_actions));
+			set_titlebar (new Toolbar (main_actions, this));
+			todolist = new TodoList();
 
-			var grid = new Gtk.Grid ();
-			grid.orientation = Gtk.Orientation.VERTICAL;
-			grid.row_spacing = 6;
-
-			var show_button = new Gtk.Button.with_label (_("Show"));
-			var info_label = new Gtk.Label ("this is a label!");
-
-			show_button.clicked.connect ( () => {
-					var notification = new Notification (_("Hello world"));
-					notification.set_body (_("This is my first notification"));
-					this.application.send_notification ("notify.app", notification);
-				});
-
-			grid.add (show_button);
-			grid.add (info_label);
-			add (grid);
-
+			add(todolist);
 			show_all ();
 		}
 
 		private void action_add_task () {
+			// todolist.add("some super heroe", 10);
 			stdout.printf("**action_add_task**\n\n");
 		}
 
