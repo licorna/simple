@@ -40,6 +40,7 @@ include(ValaPrecompile)
 vala_precompile(VALA_C ${EXEC_NAME}
   src/Application.vala
   src/MainWindow.vala
+  src/Toolbar.vala
 
   PACKAGES
   granite>=0.3.0)

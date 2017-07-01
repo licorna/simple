@@ -1,6 +1,4 @@
 /*
-* -*- compile-command: "make" -*-
-*
 * Copyright (c) 2017 Rodrigo Valin
 *
 * This program is free software; you can redistribute it and/or
