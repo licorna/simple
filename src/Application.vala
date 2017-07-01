@@ -24,35 +24,17 @@
 namespace SimpleTodo {
 	public class Application : Granite.Application {
 		public Application() {
-			Object (application_id: "com.github.licorna.simpletodo",
-					flags: ApplicationFlags.FLAGS_NONE);
+			activate();
 		}
-
-		protected override void activate () {
-			var app_window = new Gtk.ApplicationWindow (this);
-			app_window.title = "Simple TODO";
-			app_window.set_default_size (600, 500);
 		
-			var grid = new Gtk.Grid ();
-			grid.orientation = Gtk.Orientation.VERTICAL;
-			grid.row_spacing = 6;
-
-			var title_label = new Gtk.Label (_("Notifications"));
-			var show_button = new Gtk.Button.with_label (_("Show"));
-
-			show_button.clicked.connect ( () => {
-					var notification = new Notification (_("Hello world"));
-					notification.set_body (_("This is my first notification"));
-					this.send_notification ("notify.app", notification);
-				});
-
-			grid.add (title_label);
-			grid.add (show_button);
-
-			app_window.add (grid);
-
-			app_window.show_all ();
+		protected override void activate () {
+			var window = this.new_window ();
+			window.show ();
 		}
+		
+		public MainWindow new_window () {
+            return new MainWindow (this);
+        }
 
 		public static int main (string[] args) {
 			var app = new Application ();

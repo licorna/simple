@@ -39,6 +39,7 @@ add_subdirectory (po)
 include(ValaPrecompile)
 vala_precompile(VALA_C ${EXEC_NAME}
   src/Application.vala
+  src/MainWindow.vala
 
   PACKAGES
   granite>=0.3.0)
