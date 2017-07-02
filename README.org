@@ -46,6 +46,36 @@ Currently TODOs can not be added! I'm planning on using a local sqlite
 database to store the user TODO list. This TODO file (~/.simpletodo/simple.db)
 will be backed up.
 
+UPDATE: after thinking this a bit I decided to have the store being 1
+or multiple ORG files, so they can be read and updated with any text
+editor (special interest in Emacs here). The files will be checked out
+in a local git repo so we have history for free* (* some git
+interaction will be required). There will be the option of pushing
+changes to a git repository (someone might want to use public or
+private repo). Github and bitbucket have cool ORG files formatters. I
+assume others can also render ORG files to be displayed on a web
+browser.
+
+#+BEGIN_SRC org
+* This is the name of the file
+  I will use a top level (1 asterisk) to indicate generally relevant
+  stuff, like author and stuff like that.
+
+** TODO Some TODO I have to complete
+   Each one of the second level tasks (two asterisks) will be the main
+   "TODO" tasks that will appear in the UI. They will use the usual:
+   TODO or DONE attributes (the one you traverse with Shift+left or
+   Shit+right arrows.
+** TODO Some TODO I already completed
+   DEADLINE: <2017-07-10>
+   This will also support the concept of DEADLINE.
+** DONE Some other stuff I have TO-DO
+   DEADLINE: <2017-04-25>
+   Celebrate my birthday.
+*** TODO Other tasks will be children of the previous ones.
+    But this will not be implemented for now.
+#+END_SRC
+
 *** Auto Add TODO action
 
 Figure out how to add a quick action to add TODO from anywhere. Lets say you
