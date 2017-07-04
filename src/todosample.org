@@ -1,0 +1,16 @@
+* This is super level
+This is something that will not get incorporated into the actual
+TODO element, but it should be conserved if the TODO is changed.
+
+
+We have two blank lines above this one. And one blank line before
+the next TODO item.
+
+** TODO This is TODO 1
+DEADLINE: <2017-10-20>
+
+This TODO item has a deadline.
+.
+That's a line containing a period.
+** DONE This is TODO 2
+This is the last line.
