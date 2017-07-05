@@ -23,6 +23,8 @@ namespace OrgManager {
 		private string _text_content;
 		private ArrayList<string> tags;
 
+		private ArrayList<OrgNode> children;
+
 		public string text_content {
 			get { return _text_content; }
 			set { _text_content = value; }
@@ -65,6 +67,8 @@ namespace OrgManager {
 		public OrgNode(string name) {
 			_name = name;
 			tags = new ArrayList<string> ();
+			children = new ArrayList<OrgNode> ();
+			level = OrgNode.nodeLevel(name);
 
 			if ("* TODO" in name) {
 				_state = NodeState.TODO;
@@ -75,9 +79,13 @@ namespace OrgManager {
 			};
 		}
 
+		public void addChild(OrgNode child) {
+			children.add(child);
+		}
+
 		public string to_string() {
-			return "<name: %s; state: %s; deadline: %s>".printf(
-						   name, state, deadline);
+			return "<name: %s; state: %s; deadline: %s; childs: %i>".printf(
+				name, state, deadline, children.size);
 		}
 
 		/**
@@ -113,6 +121,19 @@ namespace OrgManager {
 			}
 			return builder.str;
 		}
+
+		public static int nodeLevel(string line) {
+			/**
+		     * I don't know how to add a proper "count" from line start.
+             */
+			int asteriskCount = 0;
+			for (var c = 0; c < line.length; c++) {
+				if (line[c] != '*') break;
+				asteriskCount += 1;
+			}
+			return asteriskCount;
+		}
+
 	}
 
 	public class OrgDocument : Object {
@@ -144,6 +165,7 @@ namespace OrgManager {
 
 			doc.fileName = fileName;
 			var file = File.new_for_path(fileName);
+			OrgNode lastNode = null;
 
 			try {
 				var dis = new DataInputStream(file.read());
@@ -152,36 +174,43 @@ namespace OrgManager {
 				ArrayList<string> nodeLines = new ArrayList<string> ();
 		
 				while ((line = dis.read_line(null)) != null) {
-					var nodeLevel = nodeLevel(line);
+					var nodeLevel = OrgNode.nodeLevel(line);
 					if (nodeLevel > 0) {
 						// found new task
 						if (nodeLines.size > 0) {
 							// we have captured a TASK so far
 							var node = OrgNode.from_strings(nodeLines);
 							nodeLines.clear();
-							doc.addNode(lineNo, node);
+
+							if (lastNode != null && node.level > lastNode.level) {
+								lastNode.addChild(node);
+							} else {
+								doc.addNode(lineNo, node);
+								lastNode = node;
+							}
 						}
 					}
 					nodeLines.add(line);
 					lineNo += 1;
+				}
+
+				if (nodeLines.size > 0) {
+					// FIXME: This code is repeated inside the loop
+					var node = OrgNode.from_strings(nodeLines);
+					nodeLines.clear();
+
+					if (lastNode != null && node.level > lastNode.level) {
+						lastNode.addChild(node);
+					} else {
+						doc.addNode(lineNo, node);
+						lastNode = node;
+					}
 				}
 			} catch (Error e) {
 				error ("%s\n", e.message);
 			}
 
 			return doc;
-		}
-
-		static int nodeLevel(string line) {
-			/**
-		     * I don't know how to add a proper "count" from line start.
-             */
-			int asteriskCount = 0;
-			for (var c = 0; c < line.length; c++) {
-				if (line[c] != '*') break;
-				asteriskCount += 1;
-			}
-			return asteriskCount;
 		}
 	}
 }

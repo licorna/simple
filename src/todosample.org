@@ -17,7 +17,7 @@ This is the last line.
 
 
 * This is the Actual TODO section for Simple
-** DOING Be able to read full TODO items
+** DONE DOING Be able to read full TODO items
 This means that not only the title (the thing) with the * on it, but
 also the contents, like this text in here. I'm interested in the
 following section:
@@ -28,10 +28,14 @@ following section:
   import antigravity
 #+END_SRC
 
-** TODO Use the DEADLINE attribute
+** DONE Use the DEADLINE attribute
 DEADLINE: <2017-10-10>
 The DEADLINE attribute should exist for Simple, so this attribute
 needs to be read.
+
+** DOING Nodes should be a tree structure.
+Nodes should be a tree structure, they can have tasks as children
+(with lesser "levels").
 
 ** TODO Items or tasks should have editable content
 So this text should appear in the TODO item and should be editable.
