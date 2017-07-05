@@ -19,10 +19,20 @@ namespace OrgManager {
 		private int _priority; // 0, 1, 2 (urgent, high, normal)
 		private int _level; // amount of asterisks
 		private NodeState _state;
-		
-		// private string deadline;
+		private string _deadline;
+		private string _text_content;
 		private ArrayList<string> tags;
 
+		public string text_content {
+			get { return _text_content; }
+			set { _text_content = value; }
+		}
+
+		public string deadline {
+			get { return _deadline; }
+			set { _deadline = value; }
+		}
+		
 		public string name {
 			get { return _name; }
 			set { _name = value; }
@@ -64,6 +74,45 @@ namespace OrgManager {
 				_state = NodeState.NOT_STARTED;
 			};
 		}
+
+		public string to_string() {
+			return "<name: %s; state: %s; deadline: %s>".printf(
+						   name, state, deadline);
+		}
+
+		/**
+		 * Initializes a Node from a list of lines. The first one should
+		 * be the title (some amount of asterisks then a title).
+		 * The rest of the lines can be the DEADLINE and then some text.
+		 */
+		public static OrgNode from_strings(ArrayList<string> lines) {
+			var node = new OrgNode(lines[0]);
+			ArrayList<string> content = new ArrayList<string> ();
+			for (int c = 1; c < lines.size; c++) {
+				if (c == 1 && lines[c].has_prefix("DEADLINE: ")) {
+					node.deadline = lines[1].slice(11, lines[1].length);
+				} else {
+					content.add (lines[c]);
+				}
+			}
+			node.text_content = OrgNode.join(content);
+
+			return node;
+		}
+
+		public static string join(ArrayList<string> lines) {
+			if (lines.size == 0) return "";
+			
+			var builder = new StringBuilder();
+			var size = lines.size;
+			for (int i = 0; i < size; i++) {
+				builder.append(lines[i]);
+				if (i != size - 1) {
+					builder.append_unichar('\n');
+				}
+			}
+			return builder.str;
+		}
 	}
 
 	public class OrgDocument : Object {
@@ -100,19 +149,20 @@ namespace OrgManager {
 				var dis = new DataInputStream(file.read());
 				string line;
 				int lineNo = 0;
-
 				ArrayList<string> nodeLines = new ArrayList<string> ();
-
+		
 				while ((line = dis.read_line(null)) != null) {
-					
 					var nodeLevel = nodeLevel(line);
 					if (nodeLevel > 0) {
-						var node = new OrgNode(line);
-						doc.addNode(lineNo, node);
-						stdout.printf("Node added with level %i\n", nodeLevel);
-					} else {
-						
+						// found new task
+						if (nodeLines.size > 0) {
+							// we have captured a TASK so far
+							var node = OrgNode.from_strings(nodeLines);
+							nodeLines.clear();
+							doc.addNode(lineNo, node);
+						}
 					}
+					nodeLines.add(line);
 					lineNo += 1;
 				}
 			} catch (Error e) {
@@ -139,8 +189,7 @@ namespace OrgManager {
 int main(string[] args) {
 	var doc = OrgManager.OrgDocument.fromFile("todosample.org");
 	foreach (var entry in doc.getNodes().entries) {
-		stdout.printf("node (%i): %s - %s\n", entry.key, entry.value.name,
-			entry.value.state);
+		stdout.printf("%s\n", entry.value.to_string());
 	}
 	
 	return 0;
