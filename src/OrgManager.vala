@@ -12,7 +12,6 @@ namespace OrgManager {
 		DONE,
 		NOT_STARTED
 	}
-
 	
 	public class OrgNode : GLib.Object {
 		private string _name;
@@ -81,6 +80,10 @@ namespace OrgManager {
 
 		public void addChild(OrgNode child) {
 			children.add(child);
+		}
+
+		public ArrayList<OrgNode> getChildren() {
+			return children;
 		}
 
 		public string to_string() {
@@ -165,13 +168,16 @@ namespace OrgManager {
 
 			doc.fileName = fileName;
 			var file = File.new_for_path(fileName);
-			OrgNode lastNode = null;
 
 			try {
 				var dis = new DataInputStream(file.read());
 				string line;
 				int lineNo = 0;
 				ArrayList<string> nodeLines = new ArrayList<string> ();
+
+				// FIXME: this will not work with multiple levels
+				// it has to be changed for a stack.
+				OrgNode lastNode = null;
 		
 				while ((line = dis.read_line(null)) != null) {
 					var nodeLevel = OrgNode.nodeLevel(line);
@@ -184,6 +190,7 @@ namespace OrgManager {
 
 							if (lastNode != null && node.level > lastNode.level) {
 								lastNode.addChild(node);
+								lastNode = node;
 							} else {
 								doc.addNode(lineNo, node);
 								lastNode = node;
@@ -219,6 +226,10 @@ int main(string[] args) {
 	var doc = OrgManager.OrgDocument.fromFile("todosample.org");
 	foreach (var entry in doc.getNodes().entries) {
 		stdout.printf("%s\n", entry.value.to_string());
+		stdout.printf("Getting children now\n");
+		foreach (OrgManager.OrgNode child in entry.value.getChildren()) {
+			stdout.printf("\t%s\n", child.to_string());
+		}
 	}
 	
 	return 0;
