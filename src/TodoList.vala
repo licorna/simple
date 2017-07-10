@@ -50,15 +50,23 @@ namespace SimpleTodo {
 			foreach (var entry in org_document.getNodes().entries) {
 				store.append (out store_iter);
 				store.set (store_iter, 0, entry.value.name);
-				foreach (OrgManager.OrgNode child in entry.value.getChildren()) {
-					var name = "<level: %i; name: %s>".printf(
-						child.level, child.name);
-					store.append (out store_iter);
-					store.set (store_iter, 0, name);
-				}
+				// add children (if any);
+				addChildren (store, entry.value);
 			}
 
 			return store;
+		}
+
+		private void addChildren(Gtk.ListStore store, OrgManager.OrgNode node) {
+			foreach (OrgManager.OrgNode child in node.getChildren()) {
+				if (child.getChildren().size > 0) {
+					addChildren(store, child);
+				}
+				var name = "<level: %i; name: %s>".printf(
+					child.level, child.name);
+				store.append (out store_iter);
+				store.set (store_iter, 0, name);
+			}
 		}
 
 	}

@@ -204,18 +204,28 @@ namespace OrgManager {
 				var dis = new DataInputStream(file.read());
 				string line;
 				int lineNo = 0;
+				bool finish = true;
 				ArrayList<string> nodeLines = new ArrayList<string> ();
 
 				// Help with the tree building.
 				Stack stack = new Stack();
 
-				while ((line = dis.read_line(null)) != null) {
-					var nodeLevel = OrgNode.nodeLevel(line);
-					if (nodeLevel > 0) {
+				while ((line = dis.read_line(null)) != null || finish) {
+					var nodeLevel = -1;
+					if (line != null) {
+						nodeLevel = OrgNode.nodeLevel(line);
+					} else {
+						finish = false;
+					}
+
+					if (nodeLevel > 0 || !finish) {
 						// found new task
-						if (nodeLines.size > 0) {
+						if (nodeLines.size > 0 || !finish) {
 							// we have captured a TASK so far
 							var node = OrgNode.from_strings(nodeLines);
+							if (nodeLevel == 3) {
+								stdout.printf("Got LEVEL 3! -> %s\n", node.to_string());
+							}
 							nodeLines.clear();
 
 							if (stack.empty()) {
@@ -255,6 +265,8 @@ namespace OrgManager {
 					lineNo += 1;
 				}
 
+				// FIXME:
+				// The nodes are added when a new 
 				// if (nodeLines.size > 0) {
 				// 	// FIXME: This code is repeated inside the loop
 				// 	var node = OrgNode.from_strings(nodeLines);
