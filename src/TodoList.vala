@@ -48,9 +48,13 @@ namespace SimpleTodo {
 
 			Gtk.ListStore store = new Gtk.ListStore(1, typeof(string));
 			foreach (var entry in org_document.getNodes().entries) {
+				store.append (out store_iter);
+				store.set (store_iter, 0, entry.value.name);
 				foreach (OrgManager.OrgNode child in entry.value.getChildren()) {
+					var name = "<level: %i; name: %s>".printf(
+						child.level, child.name);
 					store.append (out store_iter);
-					store.set (store_iter, 0, child.name);
+					store.set (store_iter, 0, name);
 				}
 			}
 

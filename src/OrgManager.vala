@@ -7,6 +7,40 @@
 using Gee;
 
 namespace OrgManager {
+	/**
+	 * Simple Stack class to help us build the org-document tree.
+	 */
+	public class Stack {
+		private ArrayList<OrgNode> stack;
+		public Stack() {
+			stack = new ArrayList<OrgNode> ();
+		}
+
+		public OrgNode? pop() {
+			if (stack.size == 0) return null;
+
+			return stack.remove_at(stack.size - 1);
+		}
+
+		public void push(OrgNode node) {
+			stack.insert(stack.size, node);
+		}
+
+		public OrgNode? top() {
+			if (stack.size == 0) return null;
+
+			return stack.get(stack.size - 1);
+		}
+
+		public bool empty() {
+			return stack.size == 0;
+		}
+
+		public int size() {
+			return stack.size;
+		}
+	}
+	
 	public enum NodeState {
 		TODO,
 		DONE,
@@ -64,10 +98,10 @@ namespace OrgManager {
 		}
 		
 		public OrgNode(string name) {
-			_name = name;
 			tags = new ArrayList<string> ();
 			children = new ArrayList<OrgNode> ();
 			level = OrgNode.nodeLevel(name);
+			_name = name.slice(level, name.length);
 
 			if ("* TODO" in name) {
 				_state = NodeState.TODO;
@@ -166,19 +200,15 @@ namespace OrgManager {
 		public static OrgDocument fromFile(GLib.File file) {
 			var doc = new OrgDocument();
 
-			//doc.fileName = fileName;
-			// var file = File.new_for_path(fileName);
-
 			try {
 				var dis = new DataInputStream(file.read());
 				string line;
 				int lineNo = 0;
 				ArrayList<string> nodeLines = new ArrayList<string> ();
 
-				// FIXME: this will not work with multiple levels
-				// it has to be changed for a stack.
-				OrgNode lastNode = null;
-		
+				// Help with the tree building.
+				Stack stack = new Stack();
+
 				while ((line = dis.read_line(null)) != null) {
 					var nodeLevel = OrgNode.nodeLevel(line);
 					if (nodeLevel > 0) {
@@ -188,12 +218,36 @@ namespace OrgManager {
 							var node = OrgNode.from_strings(nodeLines);
 							nodeLines.clear();
 
-							if (lastNode != null && node.level > lastNode.level) {
-								lastNode.addChild(node);
-								lastNode = node;
-							} else {
+							if (stack.empty()) {
+								stack.push(node);
 								doc.addNode(lineNo, node);
-								lastNode = node;
+							} else {
+								if (node.level > stack.top().level) {
+									// we are adding a new children node
+									stack.top().addChild(node);
+									stack.push(node);
+								} else {
+									if (node.level == stack.top().level) {
+										// same level, discard old one
+										stack.pop();
+										stack.top().addChild(node);
+										stack.push(node);
+									} else {
+										while (!stack.empty() && stack.top().level > node.level) {
+											stack.pop();
+										}
+										if (stack.size() == 1) {
+											// this is same level as first level, should be removed
+											stack.pop();
+											stack.push(node);
+											doc.addNode(lineNo, node);
+										} else {
+											stack.pop();
+											stack.top().addChild(node);
+											stack.push(node);
+										}
+									}
+								}
 							}
 						}
 					}
@@ -201,18 +255,18 @@ namespace OrgManager {
 					lineNo += 1;
 				}
 
-				if (nodeLines.size > 0) {
-					// FIXME: This code is repeated inside the loop
-					var node = OrgNode.from_strings(nodeLines);
-					nodeLines.clear();
+				// if (nodeLines.size > 0) {
+				// 	// FIXME: This code is repeated inside the loop
+				// 	var node = OrgNode.from_strings(nodeLines);
+				// 	nodeLines.clear();
 
-					if (lastNode != null && node.level > lastNode.level) {
-						lastNode.addChild(node);
-					} else {
-						doc.addNode(lineNo, node);
-						lastNode = node;
-					}
-				}
+				// 	if (lastNode != null && node.level > lastNode.level) {
+				// 		lastNode.addChild(node);
+				// 	} else {
+				// 		doc.addNode(lineNo, node);
+				// 		lastNode = node;
+				// 	}
+				// }
 			} catch (Error e) {
 				error ("%s\n", e.message);
 			}
