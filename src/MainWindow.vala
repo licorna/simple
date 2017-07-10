@@ -19,7 +19,6 @@
 * Authored by: Rodrigo Valin <licorna@gmail.com>
 */
 
-
 namespace SimpleTodo {
 	public class MainWindow : Gtk.Window {
 		public Gtk.ActionGroup main_actions;

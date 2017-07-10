@@ -11,7 +11,7 @@ set (DATADIR "${CMAKE_INSTALL_PREFIX}/share")
 set (PKGDATADIR "${DATADIR}/com.github.licorna.simpletodo")
 
 set (EXEC_NAME "com.github.licorna.simpletodo")
-set (RELEASE_NAME "Simple TODO")
+set (RELEASE_NAME "Simple")
 set (VERSION "0.2")
 set (VERSION_INFO "Complex stuff")
 
@@ -43,6 +43,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
   src/Toolbar.vala
   src/TodoList.vala
   src/TodoAddPopover.vala
+  src/OrgManager.vala
 
   PACKAGES
   granite>=0.3.0)

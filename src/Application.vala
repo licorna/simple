@@ -19,6 +19,8 @@
 * Authored by: Rodrigo Valin <licorna@gmail.com>
 */
 
+using OrgManager;
+
 namespace SimpleTodo {
 	public class Application : Granite.Application {
 		public Application() {

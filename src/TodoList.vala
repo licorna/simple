@@ -19,25 +19,43 @@
 * Authored by: Rodrigo Valin <licorna@gmail.com>
 */
 
+using OrgManager;
 
 namespace SimpleTodo {
+	private const string ORG_FILE = "/home/rvalin/.simple/todo.org";
 	public class TodoList : Gtk.TreeView {
 		private Gtk.ListStore store;
 		private Gtk.TreeIter store_iter;
 
+		private OrgManager.OrgDocument org_document;
+
 		public TodoList() {
-			store = new Gtk.ListStore(2, typeof(string), typeof(int));
-
-			store.append (out store_iter);
-			store.set (store_iter, 0, "Batman", 1, 13);
-			store.append (out store_iter);
-			store.set (store_iter, 0, "Superman", 1, 17);
-
+			var file  = getTodoFile();
+			store = getStoreFromFile(file);
 			set_model(store);
 
 			Gtk.CellRendererText cell = new Gtk.CellRendererText ();
-			insert_column_with_attributes (-1, "State", cell, "text", 0);
-			insert_column_with_attributes (-1, "Cities", cell, "text", 1);
+			insert_column_with_attributes (-1, "TODO", cell, "text", 0);
 		}
+
+		private GLib.File getTodoFile() {
+			var home_dir = File.new_for_path (Environment.get_home_dir());
+			return home_dir.get_child(".simple").get_child("todo.org");
+		}
+
+		private Gtk.ListStore getStoreFromFile(GLib.File file) {
+			org_document = OrgManager.OrgDocument.fromFile(file);
+
+			Gtk.ListStore store = new Gtk.ListStore(1, typeof(string));
+			foreach (var entry in org_document.getNodes().entries) {
+				foreach (OrgManager.OrgNode child in entry.value.getChildren()) {
+					store.append (out store_iter);
+					store.set (store_iter, 0, child.name);
+				}
+			}
+
+			return store;
+		}
+
 	}
 }

@@ -163,11 +163,11 @@ namespace OrgManager {
 		/**
 		 * Factory method, create OrgDocument from File.
 		 */
-		public static OrgDocument fromFile(string fileName) {
+		public static OrgDocument fromFile(GLib.File file) {
 			var doc = new OrgDocument();
 
-			doc.fileName = fileName;
-			var file = File.new_for_path(fileName);
+			//doc.fileName = fileName;
+			// var file = File.new_for_path(fileName);
 
 			try {
 				var dis = new DataInputStream(file.read());
@@ -220,17 +220,4 @@ namespace OrgManager {
 			return doc;
 		}
 	}
-}
-
-int main(string[] args) {
-	var doc = OrgManager.OrgDocument.fromFile("todosample.org");
-	foreach (var entry in doc.getNodes().entries) {
-		stdout.printf("%s\n", entry.value.to_string());
-		stdout.printf("Getting children now\n");
-		foreach (OrgManager.OrgNode child in entry.value.getChildren()) {
-			stdout.printf("\t%s\n", child.to_string());
-		}
-	}
-	
-	return 0;
 }
