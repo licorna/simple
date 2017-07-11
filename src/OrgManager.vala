@@ -54,8 +54,12 @@ namespace OrgManager {
 			set { _name = value; }
 		}
 
-		public string state {
+		public string state_name {
 			get { return nameOfState(_state); }
+		}
+
+		public NodeState state {
+			get { return _state; }
 		}
 
 		public int priority {
@@ -103,7 +107,7 @@ namespace OrgManager {
 
 		public string to_string() {
 			return "<name: %s; state: %s; deadline: %s; childs: %i>".printf(
-				name, state, deadline, children.size);
+				name, state_name, deadline, children.size);
 		}
 
 		/**
@@ -116,7 +120,7 @@ namespace OrgManager {
 			ArrayList<string> content = new ArrayList<string> ();
 			for (int c = 1; c < lines.size; c++) {
 				if (c == 1 && lines[c].has_prefix("DEADLINE: ")) {
-					node.deadline = lines[1].slice(11, lines[1].length);
+					node.deadline = lines[1].slice(11, lines[1].length - 1);
 				} else {
 					content.add (lines[c]);
 				}

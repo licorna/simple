@@ -32,10 +32,41 @@ namespace SimpleTodo {
 		public TodoList() {
 			var file  = getTodoFile();
 			store = getStoreFromFile(file);
-			set_model(store);
 
-			Gtk.CellRendererText cell = new Gtk.CellRendererText ();
-			insert_column_with_attributes (-1, "TODO", cell, "text", 0);
+			Gtk.CellRendererText name = new Gtk.CellRendererText ();
+			Gtk.CellRendererText deadline = new Gtk.CellRendererText ();
+			insert_column_with_attributes (-1, "TODO_col", name, "markup", 0);
+			insert_column_with_attributes (-1, "DEADLINE_col", deadline, "markup", 1);
+
+			set_headers_visible (false);
+			set_model(store);
+		}
+
+		private string getStyledNodeText(OrgNode node) {
+			var builder = new StringBuilder ();
+			switch (node.priority) {
+			    case 0: builder.append ("[<b>Urgent</b>]"); break;
+			    case 1: builder.append ("[<i>high</i>]"); break;
+			}
+			switch (node.state) {
+			    case OrgManager.NodeState.DONE:
+					builder.append ("[DONE]"); break;
+			    case OrgManager.NodeState.TODO:
+					builder.append ("[<b>TODO</b>]"); break;				
+			}
+
+			builder.append(node.name);
+
+			return builder.str;
+		}
+
+		private string getStyledDeadlineText(OrgNode node) {
+			var builder = new StringBuilder ();
+			if (node.deadline != null) {
+				builder.append ("[<span foreground=\"red\">%s</span>]".
+								printf (node.deadline));
+			}
+			return builder.str;
 		}
 
 		private GLib.File getTodoFile() {
@@ -49,19 +80,23 @@ namespace SimpleTodo {
 		private Gtk.ListStore getStoreFromFile(GLib.File file) {
 			org_document = OrgManager.OrgDocument.fromFile(file);
 
-			Gtk.ListStore store = new Gtk.ListStore(1, typeof(string));
+			Gtk.ListStore store = new Gtk.ListStore(2, typeof(string),
+													typeof(string));
 			foreach (var entry in org_document.getNodes().entries) {
 				store.append (out store_iter);
-				store.set (store_iter, 0, entry.value.name);
-				// add children (if any);
-				addChildren (store, entry.value);
+				string entry_text = getStyledNodeText(entry.value);
+				string entry_deadline = getStyledDeadlineText(entry.value);
+
+				store.set (store_iter, 0, entry_text, 1, entry_deadline);
 			}
 
 			return store;
 		}
 
 		/**
-		 * `addChildred` will add `OrgNode`s to the `Gtk.ListStore` store.
+		 * `addChildrent` will add `OrgNode`s to the `Gtk.ListStore` store.
+		 * I will not use this yet, as the main TreeView will contain just
+		 * one list of TODO items.
 		 */
 		private void addChildren(Gtk.ListStore store, OrgManager.OrgNode node) {
 			foreach (OrgManager.OrgNode child in node.getChildren()) {
