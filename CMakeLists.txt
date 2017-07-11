@@ -44,6 +44,7 @@ vala_precompile(VALA_C ${EXEC_NAME}
   src/TodoList.vala
   src/TodoAddPopover.vala
   src/OrgManager.vala
+  src/Stack.vala
 
   PACKAGES
   granite>=0.3.0)

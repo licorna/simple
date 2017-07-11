@@ -19,32 +19,40 @@
  * Authored by: Rodrigo Valin <licorna@gmail.com>
  */
 
-using OrgManager;
+using Gee;
 
-namespace SimpleTodo {
-	public class Application : Granite.Application {
-		public Application() {
-			Object (application_id: "com.github.licorna.simple",
-					flags: ApplicationFlags.FLAGS_NONE);
+namespace OrgManager {
+    /**
+	 * Simple Stack class to help us build the org-document tree.
+	 */
+	public class Stack {
+		private ArrayList<OrgNode> stack;
+		public Stack() {
+			stack = new ArrayList<OrgNode> ();
 		}
-		
-		protected override void activate () {
-			var window = new MainWindow (this);
-			window.show ();
 
-			var quit_action = new SimpleAction ("quit", null);
-			add_action (quit_action);
-			add_accelerator ("<control>q", "app.quit", null);
-			quit_action.activate.connect(() => {
-				if (window != null) {
-					window.destroy ();
-				}
-			});
+		public OrgNode? pop() {
+			if (stack.size == 0) return null;
+
+			return stack.remove_at(stack.size - 1);
 		}
-		
-		public static int main (string[] args) {
-			var app = new Application ();
-			return app.run (args);
+
+		public void push(OrgNode node) {
+			stack.insert(stack.size, node);
+		}
+
+		public OrgNode? top() {
+			if (stack.size == 0) return null;
+
+			return stack.get(stack.size - 1);
+		}
+
+		public bool empty() {
+			return stack.size == 0;
+		}
+
+		public int size() {
+			return stack.size;
 		}
 	}
 }

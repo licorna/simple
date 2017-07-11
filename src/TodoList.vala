@@ -43,6 +43,9 @@ namespace SimpleTodo {
 			return home_dir.get_child(".simple").get_child("todo.org");
 		}
 
+		/**
+		 * Returns a `Gtk.ListStore` from an Org Document.
+		 */
 		private Gtk.ListStore getStoreFromFile(GLib.File file) {
 			org_document = OrgManager.OrgDocument.fromFile(file);
 
@@ -57,6 +60,9 @@ namespace SimpleTodo {
 			return store;
 		}
 
+		/**
+		 * `addChildred` will add `OrgNode`s to the `Gtk.ListStore` store.
+		 */
 		private void addChildren(Gtk.ListStore store, OrgManager.OrgNode node) {
 			foreach (OrgManager.OrgNode child in node.getChildren()) {
 				if (child.getChildren().size > 0) {
@@ -68,6 +74,5 @@ namespace SimpleTodo {
 				store.set (store_iter, 0, name);
 			}
 		}
-
 	}
 }
